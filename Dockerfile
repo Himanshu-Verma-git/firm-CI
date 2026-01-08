@@ -1,17 +1,15 @@
 FROM ubuntu:latest
 
-WORKDIR /demo
+WORKDIR /work
 
-RUN apt-get update
-RUN apt-get install -y \
+# RUN apt-get update && apt-get install -y \
+#     binutils-arm-none-eabi \
+#     libnewlib-arm-none-eabi \
+
+RUN apt-get update && apt-get install -y \
+    git cmake make ninja-build \
     gcc-arm-none-eabi \
-    binutils-arm-none-eabi \
-    libnewlib-arm-none-eabi \
-    cmake \
-    make \
-    python3 \
     build-essential \
-    git
+    python3
 
-RUN 
-
+# ENV PICO_SDK_PATH=/work/pico-sdk

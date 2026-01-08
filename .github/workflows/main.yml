@@ -3,7 +3,9 @@ name: CI
 on:
   push:
     branches: [ "main" ]
-    paths: 
+    paths:
+      - 'src/**'
+      - 'Dockerfile'
   pull_request:
     branches: [ "main" ]
 
@@ -25,7 +27,7 @@ jobs:
       - name: Clone external repo
         uses: actions/checkout@v4
         with:
-          repository: owner/external-repo
+          repository: raspberrypi/pico-sdk
           path: external-repo
 
       # - name: Checkout
@@ -43,15 +45,18 @@ jobs:
         if: steps.change.outputs.any_change == 'true'
         run: docker build -t firmware_builder:latest ./main-repo/
 
-      - name: Start container
-        run: |
-          docker run --rm -d \
-          --name firmware_builder_container \
-          -v ${{ github.workspace }}/main-repo:/demo \
-          -v ${{ github.workspace }}/external-repo:/demo \
-          firmware_builder:latest tail -f /dev/null
+      - name: Mkdir build/
+        working-directory: ${{ github.workspace}}
+        run: mkdir -p build
 
-      - name: start build
-        working-directory: ./main-repo/build
+      - name: Build
         run: |
-          docker exec firmware_builder_container -c "mkdir -p build && cd build && cmake ../src && make"
+          docker run --rm \
+          -u "$(id -u):$(id -g)" \
+          --name firmware_builder_container \
+          -v "${{ github.workspace }}/main-repo/src:/work/src" \
+          -v "${{ github.workspace }}/external-repo:/work/pico-sdk" \
+          -v "${{ github.workspace }}/build:/work/build" \
+          -e PICO_SDK_PATH=/work/pico-sdk \
+          firmware_builder:latest \
+          bash -c " cmake -S /work/src -B /work/build -G Ninga && cmake --build /work/build "
