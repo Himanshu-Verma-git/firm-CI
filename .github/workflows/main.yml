@@ -60,7 +60,7 @@ jobs:
       #   run: docker build -t firmware_builder:latest ./main-repo/ 
 
       - name: Mkdir build/
-        working-directory: ${{ github.workspace}}
+        working-directory: ${{ github.workspace}}/main-repo
         run: mkdir -p build
 
       - name: Build
@@ -76,6 +76,7 @@ jobs:
           bash -c " cmake -S /work/src -B /work/build -G Ninja && cmake --build /work/build "
 
       - name: Push the build
+        working-directory: main-repo
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
