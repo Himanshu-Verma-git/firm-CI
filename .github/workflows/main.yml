@@ -10,19 +10,47 @@ on:
 
 jobs:
   # This workflow contains a single job called "build"
-  SDK:
+  build:
     
     runs-on: self-hosted
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout own repo
+        uses: actions/checkout@v4
+        with:
+          path: main-repo
+          fetch-depth: 0
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+      - name: Clone external repo
+        uses: actions/checkout@v4
+        with:
+          repository: owner/external-repo
+          path: external-repo
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      # - name: Checkout
+      #   uses: actions/checkout@v4
+      #   with:
+      #     fetch-depth: 0
+      
+      - name: Check for Dockerfile changes
+        id: change
+        uses: tj-actions/changed-files@v5
+        with:
+          files: main-repo/Dockerfile
+
+      - name: Build new image
+        if: steps.change.outputs.any_change == 'true'
+        run: docker build -t firmware_builder:latest ./main-repo/
+
+      - name: Start container
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          docker run --rm -d \
+          --name firmware_builder_container \
+          -v ${{ github.workspace }}/main-repo:/demo \
+          -v ${{ github.workspace }}/external-repo:/demo \
+          firmware_builder:latest tail -f /dev/null
+
+      - name: start build
+        working-directory: ./main-repo/build
+        run: |
+          docker exec firmware_builder_container -c "mkdir -p build && cd build && cmake ../src && make"
