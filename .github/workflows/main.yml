@@ -80,6 +80,7 @@ jobs:
 
       - name: Version artifact
         working-directory: main-repo/build
+        shell: bash
         run: |
           set -euo pipefail
 
