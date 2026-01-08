@@ -13,3 +13,4 @@ RUN apt-get update && apt-get install -y \
     python3
 
 # ENV PICO_SDK_PATH=/work/pico-sdk
+RUN echo "Made it yoo!!"
