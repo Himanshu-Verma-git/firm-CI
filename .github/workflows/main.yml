@@ -70,7 +70,7 @@ jobs:
           --name firmware_builder_container \
           -v "${{ github.workspace }}/main-repo/src:/work/src" \
           -v "${{ github.workspace }}/external-repo:/work/pico-sdk" \
-          -v "${{ github.workspace }}/build:/work/build" \
+          -v "${{ github.workspace }}/main-repo/build:/work/build" \
           -e PICO_SDK_PATH=/work/pico-sdk \
           firmware_builder:latest \
           bash -c " cmake -S /work/src -B /work/build -G Ninja && cmake --build /work/build "
