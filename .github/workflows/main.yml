@@ -82,12 +82,11 @@ jobs:
         working-directory: main-repo/build
         shell: bash
         run: |
-          set -euo pipefail
-
-          shopt -s nullglob
+          echo "$VERSION"
 
           for file in *.u2f; do
-            base="${file%.u2f}"
+            [ -f "$file" ] || continue
+            base=${file%.u2f}
             mv "$file" "${base}-${VERSION}.u2f"
           done
 

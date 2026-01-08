@@ -7,7 +7,7 @@
 #include "pico/stdlib.h"
 
 #ifndef LED_DELAY_MS
-#define LED_DELAY_MS 255
+#define LED_DELAY_MS 256
 #endif
 
 #ifndef PICO_DEFAULT_LED_PIN
