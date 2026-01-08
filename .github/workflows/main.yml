@@ -3,9 +3,9 @@ name: CI
 on:
   push:
     branches: [ "main" ]
-    paths:
-      - 'src/**'
-      - 'Dockerfile'
+    # paths:
+    #   - 'src/**'
+    #   - 'Dockerfile'
   pull_request:
     branches: [ "main" ]
 
@@ -42,7 +42,7 @@ jobs:
           files: main-repo/Dockerfile
 
       - name: Build new image
-        if: steps.change.outputs.any_change == 'true'
+        # if: steps.change.outputs.any_change == 'true'
         run: docker build -t firmware_builder:latest ./main-repo/
 
       - name: Mkdir build/
@@ -59,4 +59,4 @@ jobs:
           -v "${{ github.workspace }}/build:/work/build" \
           -e PICO_SDK_PATH=/work/pico-sdk \
           firmware_builder:latest \
-          bash -c " cmake -S /work/src -B /work/build -G Ninga && cmake --build /work/build "
+          bash -c " cmake -S /work/src -B /work/build -G Ninja && cmake --build /work/build "
