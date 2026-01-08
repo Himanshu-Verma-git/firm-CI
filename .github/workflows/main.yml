@@ -4,11 +4,13 @@ permissions:
 on:
   push:
     branches: [ "main" ]
+    tags: 'v*'
     paths:
       - 'src/**'
       - 'Dockerfile'
 
-  workflow_dispatch:
+env:
+  VERSION: ${{ github.ref_name }}
 
 jobs:
   # This workflow contains a single job called "build"
@@ -75,6 +77,18 @@ jobs:
           -e PICO_SDK_PATH=/work/pico-sdk \
           firmware_builder:latest \
           bash -c " cmake -S /work/src -B /work/build -G Ninja && cmake --build /work/build "
+
+      - name: Version artifact
+        working-directory: main-repo/build
+        run: |
+          set -euo pipefail
+
+          shopt -s nullglob
+
+          for file in *.u2f; do
+            base="${file%.u2f}"
+            mv "$file" "${base}-${VERSION}.u2f"
+          done
 
       - name: Push firmware
         if: github.event_name == 'push'
