@@ -3,9 +3,9 @@ name: CI
 on:
   push:
     branches: [ "main" ]
-    # paths:
-    #   - 'src/**'
-    #   - 'Dockerfile'
+    paths:
+      - 'src/**'
+      - 'Dockerfile'
   pull_request:
     branches: [ "main" ]
 
@@ -30,20 +30,35 @@ jobs:
           repository: raspberrypi/pico-sdk
           path: external-repo
 
-      # - name: Checkout
-      #   uses: actions/checkout@v4
-      #   with:
-      #     fetch-depth: 0
-      
-      - name: Check for Dockerfile changes
-        id: change
-        uses: tj-actions/changed-files@v5
-        with:
-          files: main-repo/Dockerfile
+        # METHOD 1: Checking for dockerfile changes and making 
+      - name: check for dockerfile changes
+        id: dockerfile_check
+        run: |
+          if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^Dockerfile$'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
 
-      - name: Build new image
-        # if: steps.change.outputs.any_change == 'true'
-        run: docker build -t firmware_builder:latest ./main-repo/
+      - name: Build Docker image
+        if: steps.dockerfile_check.outputs.changed == 'true'
+        run: |
+          docker build -t firmware_builder:latest ./main-repo/
+
+          # METHOD 2: Checking for dockerfile changes and making 
+      # - name: Check for Dockerfile changes
+      #   id: change
+      #   uses: tj-actions/changed-files@v5
+      #   with:
+      #     files: main-repo/Dockerfile
+
+      # - name: Build new image
+      #   # if: steps.change.outputs.any_change == 'true'
+      #   run: docker build -t firmware_builder:latest ./main-repo/
+
+
+      # - name: Build Docker Image
+      #   run: docker build -t firmware_builder:latest ./main-repo/ 
 
       - name: Mkdir build/
         working-directory: ${{ github.workspace}}
