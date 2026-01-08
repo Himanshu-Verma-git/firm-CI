@@ -1,5 +1,6 @@
 name: CI
-
+permissions:
+    contents: write
 on:
   push:
     branches: [ "main" ]
@@ -75,13 +76,14 @@ jobs:
           firmware_builder:latest \
           bash -c " cmake -S /work/src -B /work/build -G Ninja && cmake --build /work/build "
 
-      - name: Push the build
+      - name: Push firmware
+        if: github.event_name == 'push'
         working-directory: main-repo
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add build/*
+          git add build/**/*.uf2
 
           git diff --cached --quiet && echo "No changes" && exit 0
 
