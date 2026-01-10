@@ -4,10 +4,10 @@ permissions:
 on:
   push:
     branches: [ "main" ]
-    tags: 'v*'
-    paths:
-      - 'src/**'
-      - 'Dockerfile'
+      tags: 'v*'
+    # paths:
+    #   - 'src/**'
+    #   - 'Dockerfile'
 
 env:
   VERSION: ${{ github.ref_name }}
@@ -82,7 +82,7 @@ jobs:
         working-directory: main-repo/build
         shell: bash
         run: |
-          echo "$VERSION"
+          echo "$VERSION, ${{ github.ref_name }} "
 
           for file in *.u2f; do
             [ -f "$file" ] || continue
