@@ -84,10 +84,10 @@ jobs:
         run: |
           echo "$VERSION, ${{ github.ref_name }} "
 
-          for file in *.u2f; do
+          for file in *.uf2; do
             [ -f "$file" ] || continue
-            base=${file%.u2f}
-            mv "$file" "${base}-${VERSION}.u2f"
+            base=${file%.uf2}
+            mv "$file" "${base}-${VERSION}.uf2"
           done
 
       - name: Push firmware
