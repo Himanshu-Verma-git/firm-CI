@@ -59,7 +59,29 @@ This avoids:
 
 ## CI Pipeline Architecture
 
-`Developer    |    |  git tag vX.Y.Z    |  git push --tags    v GitHub Actions    |    |-- Self-hosted Runner (Arch Linux)    |    |-- Checkout firmware repo (main)    |-- Checkout pico-sdk (external)    |    |-- Docker image build (only if Dockerfile changed)    |    |-- Dockerized firmware build    |    |-- Version .uf2 using Git tag    |    |-- Commit firmware back to main    v build/*.uf2 (versioned)`
+```
+Developer    
+    |    
+    |-- git tag vX.Y.Z    
+    |-- git push --tags    
+    v 
+GitHub Actions    
+    |    
+    |-- Self-hosted Runner (Arch Linux)    
+    |    
+    |-- Checkout firmware repo (main)    
+    |-- Checkout pico-sdk (external)    
+    |    
+    |-- Docker image build (only if Dockerfile changed)    
+    |    
+    |-- Dockerized firmware build    
+    |    
+    |-- Version .uf2 using Git tag    
+    |    
+    |-- Commit firmware back to main    
+    v 
+build/*.uf2 (versioned)
+```
 
 ---
 
@@ -151,7 +173,7 @@ Every firmware artifact is:
 
 ## How to Release Firmware
 
-`# ensure main is clean git checkout main git pull  # create version tag git tag v1.0.0  # push tag git push origin v1.0.0`
+```# ensure main is clean git checkout main git pull  # create version tag git tag v1.0.0  # push tag git push origin v1.0.0```
 
 That’s it.
 
