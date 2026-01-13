@@ -173,7 +173,11 @@ Every firmware artifact is:
 
 ## How to Release Firmware
 
-```# ensure main is clean git checkout main git pull  # create version tag git tag v1.0.0  # push tag git push origin v1.0.0```
+```
+# ensure main is clean git checkout main git pull  
+# create version tag git tag v1.0.0  
+# push tag git push origin v1.0.0
+```
 
 That’s it.
 
